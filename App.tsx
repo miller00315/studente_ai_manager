@@ -103,8 +103,18 @@ const App: React.FC = () => {
     const [roleCheckAttempted, setRoleCheckAttempted] = useState(false);
     const loginProcessingRef = useRef(false);
     const signInProcessingRef = useRef(false);
+    const profileResolvedRef = useRef(false);
 
     const client = getSupabaseClient();
+
+    /** Extracts rule_name from Supabase relation (object, array, or user_rule FK name). */
+    const extractRoleFromAppUser = useCallback((appUser: any): string | null => {
+        if (!appUser) return null;
+        const rel = appUser.user_rules ?? appUser.user_rule;
+        if (Array.isArray(rel)) return rel[0]?.rule_name ?? null;
+        if (rel && typeof rel === 'object') return (rel as any).rule_name ?? null;
+        return null;
+    }, []);
 
     const fetchRole = useCallback(async (uid: string): Promise<void> => {
         if (!client) {
@@ -112,52 +122,44 @@ const App: React.FC = () => {
             return;
         }
         try {
-            let appUser = null;
-            
+            let appUser: any = null;
+
             const { data: singleData, error: singleError } = await client
                 .from('app_users')
                 .select('id, user_rules(rule_name)')
                 .eq('auth_id', uid)
                 .single();
-            
+
             if (singleError) {
                 const { data: maybeData, error: maybeError } = await client
                     .from('app_users')
                     .select('id, user_rules(rule_name)')
                     .eq('auth_id', uid)
                     .maybeSingle();
-                
+
                 if (maybeError || !maybeData) {
-                    console.error('[fetchRole] Both queries failed. Single error:', singleError.message, 'Maybe error:', maybeError?.message);
-                    console.error('[fetchRole] Role could not be determined - user not found');
+                    console.warn('[fetchRole] User not in app_users or RLS blocked:', singleError.message, maybeError?.message);
                     return;
                 }
-                
                 appUser = maybeData;
             } else {
                 appUser = singleData;
             }
 
-            if (!appUser) {
-                console.error('[fetchRole] ✗ No user data found after both queries');
-                console.error('[fetchRole] Role could not be determined - user not found');
-                return;
-            }
+            if (!appUser) return;
 
-            let role = null;
-            if (Array.isArray(appUser.user_rules)) {
-                role = appUser.user_rules[0]?.rule_name;
-            } else if (appUser.user_rules && typeof appUser.user_rules === 'object') {
-                role = (appUser.user_rules as any)?.rule_name;
-            }
-
+            const role = extractRoleFromAppUser(appUser);
             if (role) {
                 setUserRole(role as UserRole);
+            } else {
+                // Perfil encontrado mas relação user_rules vazia ou formato inesperado: no app student, tratar como Student
+                setUserRole('Student');
             }
-        } catch {
-            // Error handled silently
+            profileResolvedRef.current = true;
+        } catch (e) {
+            console.warn('[fetchRole] Exception:', e);
         }
-    }, [client]);
+    }, [client, extractRoleFromAppUser]);
 
     const handleLoginSuccess = async () => {
         if (loginProcessingRef.current) return;
@@ -290,6 +292,7 @@ const App: React.FC = () => {
                 }
 
                 if (event === 'SIGNED_OUT') {
+                    profileResolvedRef.current = false;
                     setSession(null);
                     setUserRole('Student');
                     setAuthLoading(false);
@@ -340,6 +343,7 @@ const App: React.FC = () => {
                     } else if (!checkedSession) {
                         // Session expired, update state without reloading
                         if (mounted) {
+                            profileResolvedRef.current = false;
                             setSession(null);
                             setUserRole('Student');
                             setAuthLoading(false);
@@ -352,6 +356,7 @@ const App: React.FC = () => {
                             // Only sign out if session is actually expired (with small buffer)
                             if (timeLeft < -60) { // 60 second buffer to avoid race conditions
                                 if (mounted) {
+                                    profileResolvedRef.current = false;
                                     setSession(null);
                                     setUserRole('Student');
                                     setAuthLoading(false);
@@ -436,7 +441,7 @@ const App: React.FC = () => {
         );
     }
 
-    if (session && !authLoading && userRole === 'Student' && roleCheckAttempted) {
+    if (session && !authLoading && userRole === 'Student' && roleCheckAttempted && !profileResolvedRef.current) {
         return (
             <div className="h-screen w-screen flex flex-col items-center justify-center bg-slate-50 p-4">
                 <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full border border-red-200">

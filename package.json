@@ -9,11 +9,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@edutest/shared": "^1.0.0",
+    "@google/genai": "^1.30.0",
+    "@supabase/supabase-js": "^2.84.0",
+    "i18next": "^25.7.4",
+    "i18next-browser-languagedetector": "^8.2.0",
     "lucide-react": "^0.554.0",
+    "mammoth": "1.6.0",
+    "pdfjs-dist": "4.0.379",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-markdown": "9"
+    "react-i18next": "^16.5.1",
+    "react-markdown": "9",
+    "xlsx": "latest"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

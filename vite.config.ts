@@ -16,7 +16,11 @@ export default defineConfig(({ mode }) => {
         'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY || env.API_KEY),
         'process.env.REACT_APP_SUPABASE_URL': JSON.stringify(env.REACT_APP_SUPABASE_URL),
         'process.env.REACT_APP_SUPABASE_ANON_KEY': JSON.stringify(env.REACT_APP_SUPABASE_ANON_KEY),
-        'process.env.SUPABASE_PUBLISHABLE_DEFAULT_KEY': JSON.stringify(env.SUPABASE_PUBLISHABLE_DEFAULT_KEY)
+        'process.env.SUPABASE_PUBLISHABLE_DEFAULT_KEY': JSON.stringify(env.SUPABASE_PUBLISHABLE_DEFAULT_KEY),
+        'import.meta.env.REACT_APP_SUPABASE_URL': JSON.stringify(env.REACT_APP_SUPABASE_URL),
+        'import.meta.env.REACT_APP_SUPABASE_ANON_KEY': JSON.stringify(env.REACT_APP_SUPABASE_ANON_KEY),
+        'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(env.REACT_APP_SUPABASE_URL || env.VITE_SUPABASE_URL),
+        'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.REACT_APP_SUPABASE_ANON_KEY || env.VITE_SUPABASE_ANON_KEY),
       },
       build: {
         target: 'es2022',
@@ -34,7 +38,6 @@ export default defineConfig(({ mode }) => {
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),
-          '@shared': path.resolve(__dirname, '../shared'),
         },
       },
     };

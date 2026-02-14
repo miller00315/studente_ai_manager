@@ -53,7 +53,6 @@ export function useCountryStates(
         );
         setCountries(sorted);
       } catch (error) {
-        console.error('Erro ao carregar países:', error);
       } finally {
         setLoadingCountries(false);
       }
@@ -84,7 +83,6 @@ export function useCountryStates(
         );
         setStates(sorted);
       } catch (error) {
-        console.error('Erro ao carregar estados:', error);
       } finally {
         setLoadingStates(false);
       }

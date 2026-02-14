@@ -142,7 +142,6 @@ export const useTestReleaseManager = (hasSupabase: boolean, institutionId?: stri
         setInstitutions(iData);
         setResults(resData);
     } catch (err: any) {
-        console.error("Error fetching release data:", err);
         
         let msg = "Unknown error";
         

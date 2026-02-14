@@ -49,7 +49,6 @@ export const useInstitutionDetails = (institutionId: string, hasSupabase: boolea
         setGrades(gradeData.filter(g => g.institution_id === institutionId));
 
     } catch (err: any) {
-        console.error("Error fetching institution details:", err);
         setError(err.message || "Failed to load institution details.");
     } finally {
         setLoading(false);
@@ -145,8 +144,7 @@ export const useInstitutionDetails = (institutionId: string, hasSupabase: boolea
               await fetchDetails(); // Refresh to get updated stripe_id
           }
           return success;
-      } catch (e: any) {
-          console.error("Falha ao criar cliente Stripe:", e);
+      } catch {
           return false;
       }
   };

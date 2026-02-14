@@ -76,7 +76,6 @@ export const useReportManager = (hasSupabase: boolean, userRole?: string, instit
                         }
                     }
                 } catch (err) {
-                    console.error("Error fetching professor ID:", err);
                     setProfessorIdFetched(false); // Reset on error to allow retry
                 }
             }
@@ -111,7 +110,6 @@ export const useReportManager = (hasSupabase: boolean, userRole?: string, instit
             }
             setClasses(data);
         } catch (err: any) {
-            console.error("Error fetching classes:", err);
             setError(err.message || "Failed to load classes.");
         } finally {
             setLoading(false);
@@ -142,7 +140,6 @@ export const useReportManager = (hasSupabase: boolean, userRole?: string, instit
             }
             setStudents(data);
         } catch (err: any) {
-            console.error("Error fetching students:", err);
             setError(err.message || "Failed to load students.");
         } finally {
             setLoading(false);
@@ -173,7 +170,6 @@ export const useReportManager = (hasSupabase: boolean, userRole?: string, instit
             }
             setTests(data);
         } catch (err: any) {
-            console.error("Error fetching tests:", err);
             setError(err.message || "Failed to load tests.");
         } finally {
             setLoading(false);
@@ -188,7 +184,6 @@ export const useReportManager = (hasSupabase: boolean, userRole?: string, instit
             const report = await useCase.getClassPerformanceReport(classId, dateFilter);
             setClassReport(report);
         } catch (err: any) {
-            console.error("Error fetching class report:", err);
             setError(err.message || "Failed to load class report.");
         } finally {
             setLoading(false);
@@ -203,7 +198,6 @@ export const useReportManager = (hasSupabase: boolean, userRole?: string, instit
             const report = await useCase.getStudentPerformanceReport(studentId, dateFilter);
             setStudentReport(report);
         } catch (err: any) {
-            console.error("Error fetching student report:", err);
             setError(err.message || "Failed to load student report.");
         } finally {
             setLoading(false);
@@ -218,7 +212,6 @@ export const useReportManager = (hasSupabase: boolean, userRole?: string, instit
             const report = await useCase.getTestPerformanceReport(testId, dateFilter);
             setTestReport(report);
         } catch (err: any) {
-            console.error("Error fetching test report:", err);
             setError(err.message || "Failed to load test report.");
         } finally {
             setLoading(false);
@@ -233,7 +226,6 @@ export const useReportManager = (hasSupabase: boolean, userRole?: string, instit
             const report = await useCase.getInstitutionPerformanceReport(instId, dateFilter);
             setInstitutionReport(report);
         } catch (err: any) {
-            console.error("Error fetching institution report:", err);
             setError(err.message || "Failed to load institution report.");
         } finally {
             setLoading(false);
@@ -248,7 +240,6 @@ export const useReportManager = (hasSupabase: boolean, userRole?: string, instit
             const report = await useCase.getProfessorPerformanceReport(profId, dateFilter);
             setProfessorReport(report);
         } catch (err: any) {
-            console.error("Error fetching professor report:", err);
             setError(err.message || "Failed to load professor report.");
         } finally {
             setLoading(false);

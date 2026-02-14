@@ -135,7 +135,6 @@ export const useClassManager = (hasSupabase: boolean, institutionId?: string) =>
       setClasses(cData);
       setInstitutions(iData);
     } catch (err: any) {
-      console.error("Error fetching classes:", err);
       if (err?.code === '42P01') {
           setError("Table 'classes' missing. Run SQL update.");
       } else {

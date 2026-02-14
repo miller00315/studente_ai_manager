@@ -49,7 +49,6 @@ export const useAIAgentManager = (hasSupabase: boolean) => {
             
             setAgents(filteredData);
         } catch (err: any) {
-            console.error("Error fetching agents:", err);
             // Handle specifically the "relation does not exist" error (missing table)
             if (err?.code === '42P01') {
                 setError("Table 'ai_agents' missing. Go to Dashboard to copy/run SQL.");
@@ -112,7 +111,6 @@ export const useAIAgentManager = (hasSupabase: boolean) => {
             
             setChatHistory([...newHistory, { role: 'model' as const, parts: [{ text: responseText }] }]);
         } catch (err: any) {
-            console.error(err);
             setChatHistory(prev => [...prev, { role: 'model' as const, parts: [{ text: "Error: " + (err.message || "Unknown error") }] }]);
         } finally {
             setIsChatting(false);

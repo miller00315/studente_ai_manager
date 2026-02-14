@@ -50,7 +50,6 @@ export const useProfessorReleases = (hasSupabase: boolean) => {
         .maybeSingle();
       
       if (appUserError) {
-        console.error('Error fetching app_user:', appUserError);
         setProfessorIdLoading(false);
         setProfessorIdFetched(false);
         return;
@@ -74,7 +73,6 @@ export const useProfessorReleases = (hasSupabase: boolean) => {
         .maybeSingle();
 
       if (profError) {
-        console.error('Error fetching professor:', profError);
         setProfessorIdLoading(false);
         setProfessorIdFetched(false);
         return;
@@ -85,7 +83,6 @@ export const useProfessorReleases = (hasSupabase: boolean) => {
       }
       setProfessorIdLoading(false);
     } catch (err: any) {
-      console.error('Error fetching professor ID:', err);
       setError('errors.professor.fetchFailed');
       setProfessorIdLoading(false);
       setProfessorIdFetched(false); // Permitir tentar novamente em caso de erro
@@ -121,7 +118,6 @@ export const useProfessorReleases = (hasSupabase: boolean) => {
       const data = await testUC.getTestsByProfessor(professorId, adminStatus);
       setTests(data || []);
     } catch (err: any) {
-      console.error('Error fetching tests:', err);
       setError('errors.test.fetchFailed');
       setTests([]);
     } finally {
@@ -154,13 +150,6 @@ export const useProfessorReleases = (hasSupabase: boolean) => {
       // Inicialmente, mostrar todas (a paginação será feita no componente)
       setReleases(filtered);
     } catch (err: any) {
-      console.error('Error fetching releases:', err);
-      console.error('Error details:', {
-        message: err.message,
-        code: err.code,
-        details: err.details,
-        hint: err.hint
-      });
       setError('errors.release.fetchFailed');
       setReleases([]);
       setAllReleases([]);

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import LoginScreen from './components/LoginScreen';
 import { UserRole } from './types';
 import { getSupabaseClient, setupSupabase, signOut } from './services/supabaseService';
-import { Loader2, Database, GraduationCap, Save, AlertCircle } from 'lucide-react';
+import { Loader2, Database, GraduationCap, Save } from 'lucide-react';
 import { Session } from '@supabase/supabase-js';
 import { useTheme } from './presentation/hooks/useTheme';
 import StudentLayout from './components/StudentLayout';
@@ -138,7 +138,6 @@ const App: React.FC = () => {
                     .maybeSingle();
 
                 if (maybeError || !maybeData) {
-                    console.warn('[fetchRole] User not in app_users or RLS blocked:', singleError.message, maybeError?.message);
                     return;
                 }
                 appUser = maybeData;
@@ -156,8 +155,8 @@ const App: React.FC = () => {
                 setUserRole('Student');
             }
             profileResolvedRef.current = true;
-        } catch (e) {
-            console.warn('[fetchRole] Exception:', e);
+        } catch {
+            // fetchRole failed (e.g. user not in app_users)
         }
     }, [client, extractRoleFromAppUser]);
 
@@ -213,9 +212,38 @@ const App: React.FC = () => {
 
     useEffect(() => {
         let mounted = true;
+        let isTabVisible = typeof document !== 'undefined' ? !document.hidden : true;
+        let lastVisibilityChange = Date.now();
+        const VISIBILITY_DEBOUNCE_MS = 500; // Wait 500ms after visibility change before processing events
 
-        if (client) {
+        // Listen to visibility changes to prevent actions when tab is not visible
+        const handleVisibilityChange = () => {
+            if (typeof document === 'undefined') return;
+            const wasHidden = !isTabVisible;
+            isTabVisible = !document.hidden;
+            lastVisibilityChange = Date.now();
+            if (!wasHidden && isTabVisible) {
+                return;
+            }
+        };
+
+        if (typeof document !== 'undefined') {
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+        }
+
+        const hasCredentials = client ||
+            (typeof window !== 'undefined' && localStorage.getItem('supabase_url') && localStorage.getItem('supabase_key'));
+
+        if (hasCredentials) {
             setIsConnected(true);
+
+            if (!client) {
+                return () => {
+                    if (typeof document !== 'undefined') {
+                        document.removeEventListener('visibilitychange', handleVisibilityChange);
+                    }
+                };
+            }
 
             const initAuth = async () => {
                 try {
@@ -255,6 +283,15 @@ const App: React.FC = () => {
 
             const { data: { subscription } } = client.auth.onAuthStateChange(async (event, session) => {
                 if (!mounted) return;
+
+                // Ignore all events when tab is not visible to prevent unnecessary state changes
+                if (typeof document !== 'undefined' && (document.hidden || !isTabVisible)) {
+                    return;
+                }
+                const timeSinceVisibilityChange = Date.now() - lastVisibilityChange;
+                if (timeSinceVisibilityChange < VISIBILITY_DEBOUNCE_MS) {
+                    return;
+                }
 
                 if (event === 'SIGNED_IN') {
                     if (signInProcessingRef.current) return;
@@ -326,6 +363,9 @@ const App: React.FC = () => {
 
             const sessionCheckInterval = setInterval(async () => {
                 if (!mounted) return;
+                if (typeof document !== 'undefined' && (document.hidden || !isTabVisible)) {
+                    return;
+                }
 
                 const { data: { session: currentSession } } = await client.auth.getSession();
                 if (!currentSession) {
@@ -338,7 +378,6 @@ const App: React.FC = () => {
                     // Only sign out if there's a real error, not just a missing session
                     // This prevents unnecessary reloads when the tab regains focus
                     if (error) {
-                        console.warn("Session check error:", error);
                         // Don't automatically sign out on errors - let Supabase handle token refresh
                     } else if (!checkedSession) {
                         // Session expired, update state without reloading
@@ -364,9 +403,8 @@ const App: React.FC = () => {
                             }
                         }
                     }
-                } catch (err) {
-                    // Session check error - don't reload, just log
-                    console.warn("Session check exception:", err);
+                } catch {
+                    // Session check error
                 }
             }, 30000);
 
@@ -374,10 +412,18 @@ const App: React.FC = () => {
                 mounted = false;
                 subscription.unsubscribe();
                 clearInterval(sessionCheckInterval);
+                if (typeof document !== 'undefined') {
+                    document.removeEventListener('visibilitychange', handleVisibilityChange);
+                }
             };
         } else {
             setAuthLoading(false);
             setIsConnected(false);
+            return () => {
+                if (typeof document !== 'undefined') {
+                    document.removeEventListener('visibilitychange', handleVisibilityChange);
+                }
+            };
         }
     }, [client]);
 
@@ -391,6 +437,22 @@ const App: React.FC = () => {
             };
             checkRoleAgain();
         }
+    }, [session, authLoading, userRole, roleCheckAttempted]);
+
+    // When login is not identified (wrong role or profile not resolved), logout and return to login screen
+    useEffect(() => {
+        if (!session || authLoading) return;
+        const unidentified =
+            userRole !== 'Student' ||
+            (userRole === 'Student' && roleCheckAttempted && !profileResolvedRef.current);
+        if (!unidentified) return;
+        signOut().finally(() => {
+            setSession(null);
+            setUserRole('Student');
+            setAuthLoading(false);
+            setRoleCheckAttempted(false);
+            profileResolvedRef.current = false;
+        });
     }, [session, authLoading, userRole, roleCheckAttempted]);
 
     if (!isConnected) {
@@ -423,35 +485,23 @@ const App: React.FC = () => {
         return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
     }
 
-    if (session && !authLoading && userRole !== 'Student') {
-        return (
-            <div className="h-screen w-screen flex flex-col items-center justify-center bg-slate-50 p-4">
-                <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full border border-red-200">
-                    <div className="flex flex-col items-center mb-6">
-                        <div className="w-16 h-16 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mb-4">
-                            <AlertCircle size={32} />
-                        </div>
-                        <h2 className="text-2xl font-bold text-slate-900 mb-2">Acesso Negado</h2>
-                        <p className="text-slate-600 text-center text-sm">
-                            Esta aplicação é exclusiva para Alunos. Por favor, acesse a aplicação correta para seu perfil.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    const shouldLogoutAndReturnToLogin =
+        session &&
+        !authLoading &&
+        (userRole !== 'Student' ||
+            (userRole === 'Student' && roleCheckAttempted && !profileResolvedRef.current));
 
-    if (session && !authLoading && userRole === 'Student' && roleCheckAttempted && !profileResolvedRef.current) {
+    if (shouldLogoutAndReturnToLogin) {
         return (
             <div className="h-screen w-screen flex flex-col items-center justify-center bg-slate-50 p-4">
-                <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full border border-red-200">
+                <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full border border-slate-200">
                     <div className="flex flex-col items-center mb-6">
-                        <div className="w-16 h-16 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mb-4">
-                            <AlertCircle size={32} />
+                        <div className="w-16 h-16 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center mb-4">
+                            <Loader2 size={32} className="animate-spin" />
                         </div>
-                        <h2 className="text-2xl font-bold text-slate-900 mb-2">Erro ao Carregar Perfil</h2>
+                        <h2 className="text-2xl font-bold text-slate-900 mb-2">Encerrando sessão</h2>
                         <p className="text-slate-600 text-center text-sm">
-                            Não foi possível determinar seu perfil de usuário. Por favor, recarregue a página ou entre em contato com o suporte.
+                            Redirecionando para a tela de login...
                         </p>
                     </div>
                 </div>

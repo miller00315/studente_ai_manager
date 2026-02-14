@@ -42,7 +42,6 @@ export const useTestCorrection = (hasSupabase: boolean) => {
           const result = await useCase.analyzeAndGrade(base64Image, releaseId);
           setResultData(result);
       } catch (err: any) {
-          console.error(err);
           setError(err.message || "Analysis failed");
       } finally {
           setAnalyzing(false);
@@ -69,7 +68,6 @@ export const useTestCorrection = (hasSupabase: boolean) => {
         });
         setSavedSuccess(true);
       } catch (err: any) {
-          console.error(err);
           alert("Failed to save: " + err.message);
       } finally {
           setSaving(false);

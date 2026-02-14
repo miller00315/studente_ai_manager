@@ -56,8 +56,6 @@ export const useProfessorDetails = (professorId: string, hasSupabase: boolean) =
         }
 
     } catch (err: any) {
-        console.error("Error fetching professor details:", err);
-        
         let msg = "Failed to load professor details.";
         
         if (err) {

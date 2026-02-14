@@ -33,7 +33,6 @@ export const useBNCCManager = (hasSupabase: boolean) => {
             const data = await useCase.getItems(includeDeleted);
             setItems(data);
         } catch (err: any) {
-            console.error("Error fetching BNCC items:", err);
             if (err?.code === '42P01') {
                 setError("Tabela 'bncc' não encontrada. Por favor, execute o script SQL no Schema do Banco de Dados.");
             } else {

@@ -41,8 +41,8 @@ export const useClassroomRooms = (classId: string | null, hasSupabase: boolean) 
             if (data.user_rules?.rule_name === 'Teacher') setIsProfessor(true);
           }
         }
-      } catch (err) {
-        console.error("Error fetching user role:", err);
+      } catch {
+        // ignore
       }
     };
     if (hasSupabase) fetchUserRole();
@@ -62,7 +62,6 @@ export const useClassroomRooms = (classId: string | null, hasSupabase: boolean) 
       const data = await roomUseCase.getRoomsByClass(classId, includeDeleted);
       setRooms(data);
     } catch (err: any) {
-      console.error("Error fetching classroom rooms:", err);
       setError(err.message || "Erro ao carregar salas de bate-papo.");
     } finally {
       setLoading(false);

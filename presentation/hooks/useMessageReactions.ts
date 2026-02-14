@@ -43,7 +43,6 @@ export const useMessageReactions = ({ messageIds, currentUserId, hasSupabase }: 
         setUserReactions(reactions);
       }
     } catch (err: any) {
-      console.error("Erro ao buscar reações:", err);
       setError(err.message || "Erro ao carregar reações.");
     } finally {
       setLoading(false);
@@ -124,7 +123,6 @@ export const useMessageReactions = ({ messageIds, currentUserId, hasSupabase }: 
 
       return result;
     } catch (err: any) {
-      console.error("Erro ao alternar reação:", err);
       throw new Error(err.message || "Erro ao reagir.");
     }
   };

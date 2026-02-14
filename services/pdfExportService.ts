@@ -110,7 +110,6 @@ export const exportToPDF = async ({
         // Save PDF
         pdf.save(filename);
     } catch (error) {
-        console.error('Error generating PDF:', error);
         throw error;
     } finally {
         // Restore original styles

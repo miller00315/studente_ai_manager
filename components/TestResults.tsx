@@ -226,7 +226,6 @@ const TestResults: React.FC<TestResultsProps> = ({ hasSupabase, institutionId, o
            });
 
       } catch (e) {
-          console.error("Error hydrating result details", e);
           setSelectedResult(r);
       } finally {
           setLoadingDetails(false);

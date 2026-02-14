@@ -26,7 +26,6 @@ export const useSettingsManager = (hasSupabase: boolean, institutionId?: string)
     const profUseCase = useMemo(() => supabase ? new ProfessorUseCases(new ProfessorRepositoryImpl(supabase)) : null, [supabase]);
 
     const handleError = (err: any, defaultMsg: string) => {
-        console.error(err);
         const msg = getFriendlyErrorMessage(err);
         alert(defaultMsg + ": " + msg);
     };
@@ -47,7 +46,6 @@ export const useSettingsManager = (hasSupabase: boolean, institutionId?: string)
             if (user) {
                 const { data, error: userError } = await supabase.from('app_users').select('user_rules(rule_name), id').eq('auth_id', user.id).single();
                 if (userError) {
-                    console.error('Error fetching user data:', userError);
                 } else if (data) {
                     // Handle both array and object cases for user_rules relation
                     const userRules = data?.user_rules;
@@ -117,7 +115,6 @@ export const useSettingsManager = (hasSupabase: boolean, institutionId?: string)
                 try {
                     typeData = await useCase.getInstitutionTypes(includeDeleted);
                 } catch (typeError: any) {
-                    console.error('Error fetching institution types:', typeError);
                     setError(`Erro ao carregar tipos de instituição: ${typeError.message || 'Erro desconhecido'}`);
                     typeData = [];
                 }
@@ -184,7 +181,6 @@ export const useSettingsManager = (hasSupabase: boolean, institutionId?: string)
             setProfessors(profData);
 
         } catch (e: any) {
-            console.error('Error in fetchData:', e);
             setError(e.message || "Failed to load settings.");
             // Ensure states are set even on error
             setIsAdmin(false);
@@ -282,7 +278,6 @@ export const useSettingsManager = (hasSupabase: boolean, institutionId?: string)
             const data = await useCase.getAllDisciplines(instId, includeDeleted);
             setDisciplines(data);
         } catch (e: any) {
-            console.error("Error loading disciplines", e);
             setError("Error loading disciplines: " + (e.message || "Unknown error"));
         } finally {
             setLoading(false);
@@ -296,7 +291,6 @@ export const useSettingsManager = (hasSupabase: boolean, institutionId?: string)
             const data = await useCase.getDisciplines(gradeId);
             setDisciplines(data);
         } catch (e: any) {
-            console.error("Error loading disciplines", e);
             setError("Error loading disciplines: " + (e.message || "Unknown error"));
         } finally {
             setLoading(false);

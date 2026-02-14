@@ -93,7 +93,6 @@ export const useTestResults = (hasSupabase: boolean, institutionId?: string) => 
         setResults(data);
         setInstitutions(instData);
     } catch (err: any) {
-        console.error("Error fetching results:", err);
         setError(err.message || "Failed to load results history.");
     } finally {
         setLoading(false);
@@ -109,7 +108,6 @@ export const useTestResults = (hasSupabase: boolean, institutionId?: string) => 
     try {
         return await useCase.getTestDetails(testId);
     } catch (e) {
-        console.error(e);
         return null;
     }
  }, [useCase]);
@@ -143,7 +141,6 @@ export const useTestResults = (hasSupabase: boolean, institutionId?: string) => 
      try {
          return await useCase.getLogs(resultId);
      } catch(e) {
-         console.error(e);
          return [];
      }
  }, [useCase]);
@@ -153,7 +150,6 @@ export const useTestResults = (hasSupabase: boolean, institutionId?: string) => 
      try {
          return await useCase.getStudentAnswers(resultId);
      } catch(e) {
-         console.error(e);
          return [];
      }
  }, [useCase]);
@@ -163,7 +159,6 @@ export const useTestResults = (hasSupabase: boolean, institutionId?: string) => 
      try {
          return await useCase.getAttemptLogs(testId, studentId);
      } catch(e) {
-         console.error(e);
          return [];
      }
  }, [useCase]);

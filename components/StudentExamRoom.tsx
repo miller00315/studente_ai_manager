@@ -66,7 +66,6 @@ const StudentExamRoom: React.FC<StudentExamRoomProps> = ({ releaseId, testId, st
                 setTest({ ...testData, questions } as Test);
 
             } catch (e) {
-                console.error("Failed to load exam:", e);
                 alert("Erro ao carregar dados da prova. Por favor, contate o aplicador.");
                 onExit();
             } finally {
@@ -166,7 +165,6 @@ const StudentExamRoom: React.FC<StudentExamRoomProps> = ({ releaseId, testId, st
             onComplete();
 
         } catch (e: any) {
-            console.error("Erro ao enviar:", e);
             alert("Falha ao enviar prova: " + e.message);
         } finally {
             setSubmitting(false);

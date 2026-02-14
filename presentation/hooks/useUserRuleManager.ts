@@ -68,7 +68,6 @@ export const useUserRuleManager = (hasSupabase: boolean) => {
             const fetched = await useCase.getRules();
             setRules(fetched);
         } catch (err: any) {
-            console.error("Error fetching rules:", err);
             if (err?.code === '42P01') {
                 setError("Table 'user_rules' missing. Please update database schema.");
             } else {

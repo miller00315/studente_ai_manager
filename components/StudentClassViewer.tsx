@@ -59,7 +59,7 @@ const StudentClassViewer: React.FC<StudentClassViewerProps> = ({ hasSupabase }) 
                         `)
                         .eq('grade_id', cls.grade_id);
                     
-                    if (discError) console.error("Error fetching disciplines:", discError);
+                    if (discError) { /* ignore */ }
 
                     const mappedDiscs = discs?.map((d: any) => ({
                         ...d,
@@ -87,7 +87,7 @@ const StudentClassViewer: React.FC<StudentClassViewerProps> = ({ hasSupabase }) 
                     `)
                     .eq('class_id', student.class_id);
                 
-                if (cpError) console.error("Error fetching class professors:", cpError);
+                if (cpError) { /* ignore */ }
                 
                 if (classProfs) {
                     const mappedProfs = classProfs.map((cp: any) => ({
@@ -101,7 +101,6 @@ const StudentClassViewer: React.FC<StudentClassViewerProps> = ({ hasSupabase }) 
                 }
 
             } catch (err: any) {
-                console.error("Error fetching class info:", err);
                 setError(err.message || "Failed to load class information.");
             } finally {
                 setLoading(false);

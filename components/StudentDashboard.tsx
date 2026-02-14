@@ -87,7 +87,6 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ hasSupabase, sessio
                 setStudentName(appUser?.first_name || 'Usuário');
             }
         } catch (e) {
-            console.error("[StudentDashboard] Exception:", e);
         } finally {
             // Always stop loading, even if there was an error
             setLoading(false);

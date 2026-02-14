@@ -40,7 +40,6 @@ export const useQuestionManager = (hasSupabase: boolean) => {
         const data = await useCase.getQuestions(includeDeleted);
         setQuestions(data);
     } catch (err: any) {
-        console.error("Error fetching questions:", err);
         const msg = err?.message || (typeof err === 'object' ? JSON.stringify(err) : String(err));
         setError(msg || "Failed to load questions.");
     } finally {
@@ -59,7 +58,6 @@ export const useQuestionManager = (hasSupabase: boolean) => {
         await useCase.generateFromAI(params);
         await fetchQuestions();
     } catch (err: any) {
-        console.error(err);
         const msg = err?.message || (typeof err === 'object' ? JSON.stringify(err) : String(err));
         alert("Failed to generate questions: " + msg);
     } finally {
@@ -74,7 +72,6 @@ export const useQuestionManager = (hasSupabase: boolean) => {
         await fetchQuestions();
         return true;
     } catch (err: any) {
-        console.error(err);
         const msg = err?.message || (typeof err === 'object' ? JSON.stringify(err) : String(err));
         alert("Error saving question: " + msg);
         return false;

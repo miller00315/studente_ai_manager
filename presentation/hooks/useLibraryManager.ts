@@ -28,8 +28,8 @@ export const useLibraryManager = (hasSupabase: boolean, gradeId?: string) => {
                     const { data } = await supabase.from('app_users').select('user_rules(rule_name)').eq('auth_id', user.id).single();
                     setIsAdmin(data?.user_rules?.rule_name === 'Administrator');
                 }
-            } catch (e) {
-                console.error("Error checking admin status:", e);
+            } catch {
+                // ignore
             }
         };
         checkAdmin();
@@ -43,7 +43,6 @@ export const useLibraryManager = (hasSupabase: boolean, gradeId?: string) => {
             const data = await useCase.getLibraries(gradeId, includeDeleted);
             setLibraries(data);
         } catch (err: any) {
-            console.error("Error fetching libraries:", err);
             setError(err.message || "Failed to load libraries");
         } finally {
             setLoading(false);
@@ -59,7 +58,6 @@ export const useLibraryManager = (hasSupabase: boolean, gradeId?: string) => {
             const data = await useCase.getItems(libraryId, includeDeleted);
             setSelectedLibraryItems(data);
         } catch (err: any) {
-            console.error("Error fetching items:", err);
             alert("Failed to load items");
         } finally {
             setLoadingItems(false);

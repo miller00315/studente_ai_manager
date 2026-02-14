@@ -31,7 +31,6 @@ export const useStudentDisabilityManager = (hasSupabase: boolean, institutionId?
         }
       }
     } catch (err) {
-      console.error('[useStudentDisabilityManager] Error fetching role:', err);
     }
   }, [supabase]);
 

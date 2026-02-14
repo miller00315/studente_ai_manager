@@ -62,7 +62,6 @@ export const useProfessorManager = (hasSupabase: boolean, institutionId?: string
       
       setProfessors(data);
     } catch (err: any) {
-      console.error("Error fetching professors:", err);
       const msg = err.message || (typeof err === 'object' ? JSON.stringify(err) : String(err));
       setError(msg || "Failed to load professors.");
     } finally {
@@ -76,7 +75,6 @@ export const useProfessorManager = (hasSupabase: boolean, institutionId?: string
         const data = await ruleUseCase.getRules();
         setRules(data);
     } catch (err) {
-        console.error("Error fetching rules:", err);
     }
   }, [ruleUseCase]);
 

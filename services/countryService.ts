@@ -42,9 +42,7 @@ export async function getCountries(): Promise<Country[]> {
     }));
 
     return countriesCache || [];
-  } catch (error) {
-    console.error('Erro ao buscar países:', error);
-    // Retorna lista básica em caso de erro
+  } catch {
     return getDefaultCountries();
   }
 }
@@ -75,7 +73,6 @@ export async function getStatesByCountry(countryName: string): Promise<State[]> 
     const data = await response.json();
 
     if (data.error) {
-      console.warn(`Nenhum estado encontrado para ${countryName}`);
       return [];
     }
 
@@ -88,8 +85,7 @@ export async function getStatesByCountry(countryName: string): Promise<State[]> 
     statesCache.set(countryName.toLowerCase(), states);
 
     return states;
-  } catch (error) {
-    console.error(`Erro ao buscar estados de ${countryName}:`, error);
+  } catch {
     return [];
   }
 }

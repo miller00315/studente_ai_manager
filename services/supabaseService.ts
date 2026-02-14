@@ -45,8 +45,8 @@ if (url && key) {
         detectSessionInUrl: false
       }
     });
-  } catch (e) {
-    console.error("Failed to initialize Supabase client:", e);
+  } catch {
+    // Supabase client init failed (e.g. missing env)
   }
 }
 
@@ -96,10 +96,10 @@ export const signOut = async (): Promise<void> => {
             try {
                 const { error } = await client.auth.signOut();
                 if (error) {
-                    console.error("Error signing out from Supabase:", error);
+                    // signOut error - continue clearing local state
                 }
-            } catch (error) {
-                console.error("Exception during Supabase signOut:", error);
+            } catch {
+                // signOut exception - continue clearing local state
             }
         }
 
@@ -120,16 +120,16 @@ export const signOut = async (): Promise<void> => {
             keysToRemove.forEach(key => {
                 try {
                     localStorage.removeItem(key);
-                } catch (e) {
-                    console.warn(`Failed to remove localStorage key ${key}:`, e);
+                } catch {
+                    // ignore
                 }
             });
 
             // Also clear sessionStorage for good measure
             try {
                 sessionStorage.clear();
-            } catch (e) {
-                console.warn("Failed to clear sessionStorage:", e);
+            } catch {
+                // ignore
             }
         }
 
@@ -138,8 +138,7 @@ export const signOut = async (): Promise<void> => {
 
         // 4. Clear state without full page reload - just reset to login state
         // Removed automatic reload to prevent unnecessary page refreshes
-    } catch (error) {
-        console.error("Critical error during signOut:", error);
+    } catch {
         // State will be cleared by React state management, no need to reload
     }
 };

@@ -82,7 +82,6 @@ export const useFinancialManager = (hasSupabase: boolean, institutionId: string 
       setBankAccounts(bankAccountsData || []);
       setCostCenters(costCentersData || []);
     } catch (err: any) {
-      console.error("Error fetching financial data:", err);
       setError(getFriendlyErrorMessage(err));
     } finally {
       setLoading(false);

@@ -112,7 +112,6 @@ export const useTestManager = (hasSupabase: boolean, institutionId?: string) => 
         setProfessors(pData);
         setInstitutions(iData);
     } catch (err: any) {
-        console.error("Error fetching test data:", err);
         const msg = err.message || (typeof err === 'object' ? JSON.stringify(err) : String(err));
         setError(msg || "Failed to load test management data.");
     } finally {
@@ -129,7 +128,6 @@ export const useTestManager = (hasSupabase: boolean, institutionId?: string) => 
           const q = await questUseCase.getQuestions();
           setAvailableQuestions(q);
       } catch (err: any) {
-          console.error("Error lazy loading questions:", err);
           alert("Failed to load question bank: " + (err.message || String(err)));
       } finally {
           setLoadingQuestions(false);
@@ -148,7 +146,6 @@ export const useTestManager = (hasSupabase: boolean, institutionId?: string) => 
         await fetchData();
         return true;
     } catch (err: any) {
-        console.error(err);
         alert("Failed to create test: " + (err.message || String(err)));
         return false;
     } finally {
@@ -164,7 +161,6 @@ export const useTestManager = (hasSupabase: boolean, institutionId?: string) => 
           await fetchData();
           return true;
       } catch (err: any) {
-          console.error(err);
           alert("Failed to update test: " + (err.message || String(err)));
           return false;
       } finally {
@@ -192,7 +188,6 @@ export const useTestManager = (hasSupabase: boolean, institutionId?: string) => 
         setSelectedTest(test);
         return test;
     } catch (err: any) {
-        console.error(err);
         alert("Failed to load details: " + (err.message || String(err)));
         return null;
     } finally {
@@ -208,7 +203,6 @@ export const useTestManager = (hasSupabase: boolean, institutionId?: string) => 
         await fetchData();
         return true;
     } catch (err: any) {
-        console.error(err);
         alert("Failed to delete test: " + (err.message || String(err)));
         return false;
     } finally {

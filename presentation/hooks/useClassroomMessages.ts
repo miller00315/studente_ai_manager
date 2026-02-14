@@ -49,8 +49,8 @@ export const useClassroomMessages = (roomId: string | null, hasSupabase: boolean
             if (ruleName === 'Teacher') setIsProfessor(true);
           }
         }
-      } catch (err) {
-        console.error("Error fetching user role:", err);
+      } catch {
+        // ignore
       }
     };
     if (hasSupabase) fetchUserRole();
@@ -72,7 +72,6 @@ export const useClassroomMessages = (roomId: string | null, hasSupabase: boolean
       const data = await messageUseCase.getMessagesByRoom(roomId, includeDeleted);
       setMessages(data);
     } catch (err: any) {
-      console.error("Error fetching messages:", err);
       setError(err.message || "Erro ao carregar mensagens.");
     } finally {
       setLoading(false);

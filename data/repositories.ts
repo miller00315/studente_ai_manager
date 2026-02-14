@@ -886,7 +886,6 @@ export class InstitutionRepositoryImpl implements IInstitutionRepository {
                 if (errorContext) {
                     try {
                         const errorBody = await errorContext.json();
-                        console.error('Stripe customer error details:', errorBody);
                         // If already synced, consider it a success
                         if (errorBody?.ok || errorBody?.message === 'already synced') {
                             return true;

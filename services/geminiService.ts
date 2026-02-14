@@ -74,7 +74,6 @@ export const chatWithAgent = async (
         // We use .text property directly as per Google GenAI SDK best practices
         return result.text || "Desculpe, não consegui gerar uma resposta.";
     } catch (error) {
-        console.error("Agent Chat Error:", error);
         throw error;
     }
 }
@@ -147,7 +146,6 @@ export const generateQuestionsWithAI = async (params: AIQuestionParams): Promise
     }
     return [];
   } catch (error) {
-    console.error("Gemini AI Generation Error:", error);
     throw error;
   }
 };
@@ -202,7 +200,6 @@ export const analyzeAnswerSheet = async (base64Image: string): Promise<AnalyzedS
     }
     throw new Error("Resposta vazia da IA");
   } catch (error) {
-    console.error("Gemini Vision Analysis Error:", error);
     throw error;
   }
 };
@@ -219,8 +216,8 @@ export const embedText = async (text: string): Promise<number[]> => {
             contents: { parts: [{ text: text }] }
         });
         if (response.embeddings?.[0]?.values) return response.embeddings[0].values;
-    } catch (error: any) {
-        console.warn("SDK text-embedding-004 falhou:", error.message);
+    } catch {
+        // try next method
     }
 
     // 2. Try REST API v1beta (Force modern model if SDK mapped to v1)
@@ -234,11 +231,9 @@ export const embedText = async (text: string): Promise<number[]> => {
         if (response.ok) {
             const data = await response.json();
             if (data.embedding?.values) return data.embedding.values;
-        } else {
-            console.warn("REST v1beta text-embedding-004 falhou:", response.statusText);
         }
-    } catch (e: any) {
-        console.warn("REST fetch falhou:", e.message);
+    } catch {
+        // try next method
     }
 
     // 3. Fallback to SDK (legacy model)
@@ -248,13 +243,11 @@ export const embedText = async (text: string): Promise<number[]> => {
             contents: { parts: [{ text: text }] }
         });
         if (response.embeddings?.[0]?.values) return response.embeddings[0].values;
-    } catch (error: any) {
-        console.warn("SDK embedding-001 falhou:", error.message);
+    } catch {
+        // try keyword search
     }
 
     // 4. Final Fallback: Keyword Search (Empty Vector)
-    // We log a warning instead of error so it doesn't look critical to the user
-    console.warn("Geração de Embeddings indisponível. Sistema usará busca por palavra-chave.");
     return [];
 }
 
@@ -347,7 +340,6 @@ ${pdfText.substring(0, 100000)}`;
         
         return { bnccs: [], hasBNCCContent: false, message: "Não foi possível processar o documento." };
     } catch (error) {
-        console.error("BNCC Extraction Error:", error);
         throw error;
     }
 };

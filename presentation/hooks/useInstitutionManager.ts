@@ -43,7 +43,6 @@ export const useInstitutionManager = (hasSupabase: boolean) => {
       const data = await useCase.getInstitutions(includeDeleted);
       setInstitutions(data);
     } catch (err: any) {
-      console.error("Error fetching institutions:", err);
       const msg = err?.message || (typeof err === 'object' ? JSON.stringify(err) : String(err));
       setError(msg || "Failed to load institutions.");
     } finally {
@@ -57,7 +56,6 @@ export const useInstitutionManager = (hasSupabase: boolean) => {
         const data = await ruleUseCase.getRules();
         setRules(data);
     } catch (err) {
-        console.error("Error fetching rules:", err);
     }
   }, [ruleUseCase]);
 

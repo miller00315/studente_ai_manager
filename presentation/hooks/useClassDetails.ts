@@ -57,7 +57,6 @@ export const useClassDetails = (classId: string, hasSupabase: boolean) => {
         setReleases(rels);
         setAvailableProfessors(profs);
     } catch (err: any) {
-        console.error("Error fetching class details:", err);
         let msg = "Failed to load class details.";
         if (err) {
             if (typeof err === 'string') msg = err;

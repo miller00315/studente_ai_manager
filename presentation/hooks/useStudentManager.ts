@@ -83,7 +83,6 @@ export const useStudentManager = (hasSupabase: boolean, institutionId?: string) 
       setInstitutions(iData);
       setClasses(cData);
     } catch (err: any) {
-      console.error("Error fetching students:", err);
       if (err?.code === '42P01') {
           setError("Tables missing. Run SQL update in Dashboard.");
       } else {
@@ -101,7 +100,6 @@ export const useStudentManager = (hasSupabase: boolean, institutionId?: string) 
         const data = await ruleUseCase.getRules();
         setRules(data);
     } catch (err) {
-        console.error("Error fetching rules:", err);
     }
   }, [ruleUseCase]);
 
@@ -218,7 +216,6 @@ export const useStudentManager = (hasSupabase: boolean, institutionId?: string) 
         setStudentHistory(history);
         setStudentReleases(releases);
     } catch(e: any) {
-        console.error("Error fetching student details", e);
     } finally {
         setLoadingHistory(false);
     }

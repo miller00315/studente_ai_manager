@@ -203,7 +203,6 @@ export class GradingUseCases {
                     testId = release.test_id;
                 }
             } catch (err: any) {
-                console.error('Error fetching release:', err);
                 throw new Error('Failed to fetch test release: ' + err.message);
             }
         } else if (releaseId && !this.releaseRepo) {
@@ -218,7 +217,6 @@ export class GradingUseCases {
                 if (!error && release) {
                     testId = release.test_id;
                 } else if (error) {
-                    console.error('Error fetching release:', error);
                     throw new Error('Failed to fetch test release: ' + error.message);
                 }
             }
